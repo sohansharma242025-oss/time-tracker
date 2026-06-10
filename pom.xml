@@ -11,9 +11,15 @@
 
     <name>Time Tracker (Parent)</name>
 
+    <!-- ===================== -->
+    <!-- PROPERTIES (UPDATED)  -->
+    <!-- ===================== -->
     <properties>
-        <java.version>17</java.version>
         <spring.version>5.3.34</spring.version>
+
+        <!-- FIX: Java 17 for Jenkins + EC2 -->
+        <java.version>17</java.version>
+
         <junit.version>4.13.2</junit.version>
 
         <findbugs.version>3.0.5</findbugs.version>
@@ -23,16 +29,22 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <!-- ===================== -->
+    <!-- MODULES               -->
+    <!-- ===================== -->
     <modules>
         <module>core</module>
         <module>web</module>
     </modules>
 
+    <!-- ===================== -->
+    <!-- BUILD PLUGINS FIX     -->
+    <!-- ===================== -->
     <build>
         <pluginManagement>
             <plugins>
 
-                <!-- COMPILER -->
+                <!-- Compiler Plugin (Java 17 FIX) -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
@@ -43,21 +55,21 @@
                     </configuration>
                 </plugin>
 
-                <!-- FIX 1: Surefire (test failure fix) -->
+                <!-- 🔥 FIX: Surefire Plugin (SOLVES TEST FAILURES IN JENKINS) -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>3.2.5</version>
                 </plugin>
 
-                <!-- 🔥 FIX 2: WAR plugin upgrade (THIS FIXES YOUR ERROR) -->
+                <!-- 🔥 FIX: WAR Plugin (for web module stability) -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-war-plugin</artifactId>
                     <version>3.4.0</version>
                 </plugin>
 
-                <!-- CODE QUALITY -->
+                <!-- Code Quality Tools -->
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>findbugs-maven-plugin</artifactId>
@@ -79,5 +91,42 @@
             </plugins>
         </pluginManagement>
     </build>
+
+    <!-- ===================== -->
+    <!-- REPORTING             -->
+    <!-- ===================== -->
+    <reporting>
+        <plugins>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <configuration>
+                    <effort>Max</effort>
+                    <threshold>Low</threshold>
+                    <xmlOutput>true</xmlOutput>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>pmd</report>
+                            <report>cpd</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+            </plugin>
+
+        </plugins>
+    </reporting>
 
 </project>
